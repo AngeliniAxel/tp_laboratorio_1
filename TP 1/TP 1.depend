@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1473015835 source:c:\users\usuario\desktop\utn\code blocks\tp 1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"angelini.h"
+
+1473015526 c:\users\usuario\desktop\utn\code blocks\tp 1\angelini.h
+
+1473015614 source:c:\users\usuario\desktop\utn\code blocks\tp 1\angelini.c
+	<stdio.h>
+	<stdlib.h>
+
