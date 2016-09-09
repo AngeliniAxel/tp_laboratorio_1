@@ -31,7 +31,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="main.c">
+		<Unit filename="../../../../Desktop/Axel/tp_laboratorio_1-master/TP 1/angelini.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../../Desktop/Axel/tp_laboratorio_1-master/TP 1/angelini.h" />
+		<Unit filename="../../../../Desktop/Axel/tp_laboratorio_1-master/TP 1/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
