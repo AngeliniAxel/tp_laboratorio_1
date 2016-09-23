@@ -12,6 +12,12 @@ typedef struct
     int estado;
 }ePersonas;
 
+void AltaPersona(ePersonas x[]);
+void BajaUsuario(ePersonas x[]);
+void OrdenarYMostrar(ePersonas x[]);
+int BuscarLibre(ePersonas x[]);
+int BuscarPorDni(ePersonas x[]);
+
 
 int main()
 {
@@ -19,14 +25,10 @@ int main()
     char seguir='s';
     int opcion=0;
     int i;
-    int j;
-    char aux;
-    int auxDni;
-    char confirma;
 
     for(i=0; i<MAX; i++)
     {
-        lista[i].estado = 0;
+        lista[i].estado = 1;
     }
 
     while(seguir=='s')
@@ -45,79 +47,17 @@ int main()
         {
             case 1:
 
-                for(i=0; i<MAX; i++)
-                {
-                	if(lista[i].estado == 0)
-                	{
-                		printf("\nIngrese apellido y nombre completo: ");
-                		fflush(stdin);
-                		gets(lista[i].nombre);
-                		printf("\nIngrese edad: ");
-                		fflush(stdin);
-                		scanf("%d", &lista[i].edad);
-                		printf("\nIngrese DNI: ");
-                		fflush(stdin);
-                		scanf("%d", &lista[i].dni);
-                		lista[i].estado = 1;
-                		printf("\n\n**  USUARIO CARGADO CON EXITO!!  **");
-                		system("pause");
-                		break;
-                	}
-                }
+                AltaPersona(lista);
                 break;
 
             case 2:
 
-                printf("Ingrese el DNI de la persona a borrar: ");
-                fflush(stdin);
-                scanf("%d", &auxDni);
-
-                for(i=0; i<MAX; i++)
-                {
-                	if(lista[i].dni == auxDni)
-                	{
-                		printf("***     USUARIO     ***\n");
-                		printf("\nNombre: %s", lista[i].nombre);
-                		printf("\nEdad: %d", lista[i].edad);
-                		printf("\nDNI: %d", lista[i].dni);
-                		printf("\n\nConfirma baja de usuario? S/N   ");
-                		confirma=tolower(gets(confirma));
-
-                		if(confirma == 's')
-                		{
-                			printf("***   USUARIO DADO DE BAJA   ***");
-                			lista[i].estado = 0;
-                			system("pause");
-                		}
-                		else
-                		{
-                			printf("***   BAJA CANCELADA   ***");
-                			system("pause");
-                		}
-
-                	}
-                	else
-                	{
-                		printf("Usuario no encontrado");
-                		system("pause");
-                	}
-                }
+                BajaUsuario(lista);
                 break;
 
             case 3:
 
-                for(i=0; i<MAX-1; i++)
-                {
-                	for(j=i+1; j<MAX; j++)
-                	{
-                		if(strcmp(lista[i].nombre, lista[j].nombre) >0)
-                		{
-                			aux = lista[i].nombre;
-                			lista[i].nombre = lista[j].nombre;
-                			lista[j].nombre = aux;
-                		}
-                	}
-                }
+                OrdenarYMostrar(lista);
                 break;
             case 4:
                 break;
@@ -129,3 +69,151 @@ int main()
 
     return 0;
 }
+
+int BuscarLibre(ePersonas x[])
+{
+    int indice = -1;
+	int i;
+
+	for(i=0; i<MAX; i++)
+	{
+		if(x[i].estado == 1)
+        {
+            indice = i;
+        }
+
+	}
+	return indice;
+}
+
+int BuscarPorDni(ePersonas x[])
+{
+    int auxDni;
+	int i;
+	int indice = -1;
+
+	printf("\nIngrese el DNI de la persona a borrar: ");
+    fflush(stdin);
+    scanf("%d", &auxDni);
+
+	for(i=0; i<MAX; i++)
+	{
+		if(x[i].dni == auxDni)
+        {
+            indice = i;
+        }
+
+	}
+	return indice;
+}
+
+
+void AltaPersona(ePersonas x[])
+{
+	int indice;
+
+	indice = BuscarLibre(x);
+
+	if(indice == -1)
+    {
+        printf("\n*** No hay espacio para usuario nuevo ***\n\n");
+        system("pause");
+    }
+    else
+    {
+        printf("\nIngrese nombre: ");
+        fflush(stdin);
+        gets(x[indice].nombre);
+        printf("\nIngrese edad: ");
+        fflush(stdin);
+        scanf("%d", &x[indice].edad);
+        printf("\nIngrese DNI: ");
+        fflush(stdin);
+        scanf("%d", &x[indice].dni);
+        x[indice].estado = 0;
+        printf("\n\n**  USUARIO CARGADO CON EXITO!!  **\n");
+
+        system("pause");
+    }
+}
+
+void BajaUsuario(ePersonas x[])
+{
+	int indice;
+	char confirma;
+
+	indice = BuscarPorDni(x);
+
+    if(indice == -1)
+    {
+        printf("\n*** No se encontro usuario con ese Dni ***\n\n");
+        system("pause");
+    }
+    else
+    {
+        printf("\n***     USUARIO     ***\n");
+        printf("\nNombre: %s", x[indice].nombre);
+        printf("\nEdad: %d", x[indice].edad);
+        printf("\nDNI: %d", x[indice].dni);
+        printf("\n\nConfirma baja de usuario? S/N   ");
+        fflush(stdin);
+        confirma=tolower(getchar());
+
+        while(confirma != 's' && confirma != 'n')
+        {
+            printf("\nRespuesta invalida. Confirme S o N ");
+            fflush(stdin);
+            confirma=tolower(getchar());
+        }
+
+        if(confirma == 's')
+        {
+            printf("\n***   USUARIO DADO DE BAJA   ***\n\n");
+            x[indice].estado = 1;
+            system("pause");
+        }
+        else
+        {
+            printf("\n***   BAJA CANCELADA   ***\n\n");
+            system("pause");
+        }
+    }
+}
+
+
+void OrdenarYMostrar(ePersonas x[])
+{
+
+	ePersonas aux;
+	int i;
+	int j;
+
+	for(i=0; i<MAX-1; i++)
+	{
+		for(j=i+1; j<MAX; j++)
+	        {
+	        	if(strcmp(x[i].nombre, x[j].nombre) >0)
+	                {
+	                	aux = x[i];
+	                	x[i] = x[j];
+	                	x[j] = aux;
+	                }
+		}
+	}
+
+
+	printf("***     LISTA DE USUARIOS     ***\n");
+
+    for(i=0; i<MAX; i++)
+    {
+        if(x[i].estado == 0)
+        {
+            printf("\nNombre: %s", x[i].nombre);
+            printf("\nEdad: %d", x[i].edad);
+            printf("\nDNI: %d\n\n", x[i].dni);
+        }
+    }
+    system("pause");
+}
+
+
