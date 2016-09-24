@@ -1,23 +1,12 @@
+// goto.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <conio.h>
+#include "funciones.h"
 #define MAX 20
-
-typedef struct
-{
-    char nombre[25];
-    int edad;
-    int dni;
-    int estado;
-}ePersonas;
-
-void AltaPersona(ePersonas x[]);
-void BajaUsuario(ePersonas x[]);
-void OrdenarYMostrar(ePersonas x[]);
-int BuscarLibre(ePersonas x[]);
-int BuscarPorDni(ePersonas x[]);
-
 
 int main()
 {
@@ -25,11 +14,18 @@ int main()
     char seguir='s';
     int opcion=0;
     int i;
+    int edad18 = 0;
+    int edad19a35 = 0;
+    int edadMayor35 = 0;
+    int indice;
+    int flag = 0;
 
-    for(i=0; i<MAX; i++)
+
+    for(i=0; i<MAX; i++) /* Inicializa los estados para que esten vacios */
     {
         lista[i].estado = 1;
     }
+
 
     while(seguir=='s')
     {
@@ -47,22 +43,110 @@ int main()
         {
             case 1:
 
-                AltaPersona(lista);
+                system("cls");
+                indice = BuscarLibre(lista); /* Busca un indice con estado libre */
+
+                if(indice == -1)
+                {
+                    printf("\n*** No hay espacio para usuario nuevo ***\n\n");
+                    system("pause");
+                }
+                else
+                {
+                    printf("\nIngrese nombre: ");
+                    fflush(stdin);
+                    gets(lista[indice].nombre);
+                    printf("\nIngrese edad: ");
+                    fflush(stdin);
+                    scanf("%d", &lista[indice].edad);
+
+                    while(lista[indice].edad <= 0 || lista[indice].edad > 100) /* Verifica que se ingrese una edad valida */
+                    {
+                        printf("Error. Ingrese edad valida: ");
+                        fflush(stdin);
+                        scanf("%d", &lista[indice].edad);
+                    }
+                    printf("\nIngrese DNI: ");
+                    fflush(stdin);
+                    scanf("%d", &lista[indice].dni);
+
+                    while(lista[indice].dni <= 1000000 || lista[indice].dni > 99999999) /* Verifica que se ingrese un dni valido */
+                    {
+                        printf("Error. Ingrese dni valida: ");
+                        fflush(stdin);
+                        scanf("%d", &lista[indice].dni);
+
+                    }
+
+                    lista[indice].estado = 0;
+                    printf("\n\n**  USUARIO CARGADO CON EXITO!!  **\n\n");
+
+                    strcpy(lista[indice].nombre,strlwr(lista[indice].nombre)); /*Pasa toda la cadena de texto a minusculas */
+                    lista[indice].nombre[0] = toupper(lista[indice].nombre[0]); /* Pasa la primer letra de la cadena a mayuscula */
+                    flag = 1;
+
+                }
+                if(lista[indice].edad<18)  /* El if toma como param la edad y la utiliza para sumar los contadores */
+                {
+                    edad18++;
+                }else if(lista[indice].edad >= 19 && lista[indice].edad <= 35){
+                    edad19a35++;
+                }else if(lista[indice].edad > 35){
+                    edadMayor35++;
+                }
+                system("pause");
                 break;
 
             case 2:
 
-                BajaUsuario(lista);
+                if(flag != 1)
+                {
+                    printf("\nDebe agregar un usuario antes de acceder a esta funcion!!\n\n");
+                    system("pause");
+                }
+                else
+                {
+                    system("cls");
+                    indice = BajaUsuario(lista);
+                    if(lista[indice].edad<18) /*El if toma como param la edad del usuario dado de baja y la resta al contador correspondiente */
+                    {
+                        edad18--;
+                    }else if(lista[indice].edad >= 19 && lista[indice].edad <= 35){
+                        edad19a35--;
+                    }else if(lista[indice].edad > 35){
+                        edadMayor35--;
+                    }
+                }
                 break;
 
             case 3:
 
-                OrdenarYMostrar(lista);
+                if(flag != 1)
+                {
+                    printf("\nDebe agregar un usuario antes de acceder a esta funcion!!\n\n");
+                    system("pause");
+                }
+                else
+                {
+                    system("cls");
+                    OrdenarYMostrar(lista);
+                }
                 break;
             case 4:
+
+                if(flag != 1)
+                {
+                    printf("\nDebe agregar un usuario antes de acceder a esta funcion!!\n\n");
+                    system("pause");
+                }
+                else
+                {
+                    Graficar(edad18, edad19a35, edadMayor35);
+                }
                 break;
             case 5:
                 seguir = 'n';
+                printf("\n\n*** HASTA LUEGO!!!   ***\n\n");
                 break;
         }
     }
@@ -70,150 +154,6 @@ int main()
     return 0;
 }
 
-int BuscarLibre(ePersonas x[])
-{
-    int indice = -1;
-	int i;
 
-	for(i=0; i<MAX; i++)
-	{
-		if(x[i].estado == 1)
-        {
-            indice = i;
-        }
-
-	}
-	return indice;
-}
-
-int BuscarPorDni(ePersonas x[])
-{
-    int auxDni;
-	int i;
-	int indice = -1;
-
-	printf("\nIngrese el DNI de la persona a borrar: ");
-    fflush(stdin);
-    scanf("%d", &auxDni);
-
-	for(i=0; i<MAX; i++)
-	{
-		if(x[i].dni == auxDni)
-        {
-            indice = i;
-        }
-
-	}
-	return indice;
-}
-
-
-void AltaPersona(ePersonas x[])
-{
-	int indice;
-
-	indice = BuscarLibre(x);
-
-	if(indice == -1)
-    {
-        printf("\n*** No hay espacio para usuario nuevo ***\n\n");
-        system("pause");
-    }
-    else
-    {
-        printf("\nIngrese nombre: ");
-        fflush(stdin);
-        gets(x[indice].nombre);
-        printf("\nIngrese edad: ");
-        fflush(stdin);
-        scanf("%d", &x[indice].edad);
-        printf("\nIngrese DNI: ");
-        fflush(stdin);
-        scanf("%d", &x[indice].dni);
-        x[indice].estado = 0;
-        printf("\n\n**  USUARIO CARGADO CON EXITO!!  **\n");
-
-        system("pause");
-    }
-}
-
-void BajaUsuario(ePersonas x[])
-{
-	int indice;
-	char confirma;
-
-	indice = BuscarPorDni(x);
-
-    if(indice == -1)
-    {
-        printf("\n*** No se encontro usuario con ese Dni ***\n\n");
-        system("pause");
-    }
-    else
-    {
-        printf("\n***     USUARIO     ***\n");
-        printf("\nNombre: %s", x[indice].nombre);
-        printf("\nEdad: %d", x[indice].edad);
-        printf("\nDNI: %d", x[indice].dni);
-        printf("\n\nConfirma baja de usuario? S/N   ");
-        fflush(stdin);
-        confirma=tolower(getchar());
-
-        while(confirma != 's' && confirma != 'n')
-        {
-            printf("\nRespuesta invalida. Confirme S o N ");
-            fflush(stdin);
-            confirma=tolower(getchar());
-        }
-
-        if(confirma == 's')
-        {
-            printf("\n***   USUARIO DADO DE BAJA   ***\n\n");
-            x[indice].estado = 1;
-            system("pause");
-        }
-        else
-        {
-            printf("\n***   BAJA CANCELADA   ***\n\n");
-            system("pause");
-        }
-    }
-}
-
-
-void OrdenarYMostrar(ePersonas x[])
-{
-
-	ePersonas aux;
-	int i;
-	int j;
-
-	for(i=0; i<MAX-1; i++)
-	{
-		for(j=i+1; j<MAX; j++)
-	        {
-	        	if(strcmp(x[i].nombre, x[j].nombre) >0)
-	                {
-	                	aux = x[i];
-	                	x[i] = x[j];
-	                	x[j] = aux;
-	                }
-		}
-	}
-
-
-	printf("***     LISTA DE USUARIOS     ***\n");
-
-    for(i=0; i<MAX; i++)
-    {
-        if(x[i].estado == 0)
-        {
-            printf("\nNombre: %s", x[i].nombre);
-            printf("\nEdad: %d", x[i].edad);
-            printf("\nDNI: %d\n\n", x[i].dni);
-        }
-    }
-    system("pause");
-}
 
 
